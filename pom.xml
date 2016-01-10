@@ -4,7 +4,7 @@
 
     <groupId>co.byng.internal.engineering</groupId>
     <artifactId>sql-validator-service</artifactId>
-    <version>0.0.1</version>
+    <version>${project.version}</version>
     <packaging>war</packaging>
 
     <name>sql-validator-service</name>

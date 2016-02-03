@@ -25,6 +25,8 @@ public class MySqlValidatorServlet extends HttpServlet {
     private final Gson gson;
     private final Validator<MySqlValidationResults> validator;
 
+
+
     public MySqlValidatorServlet(Gson gson, Validator<MySqlValidationResults> validator) {
         this.gson = gson;
         this.validator = validator;

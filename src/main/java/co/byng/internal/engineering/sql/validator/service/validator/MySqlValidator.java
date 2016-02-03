@@ -11,15 +11,18 @@ package co.byng.internal.engineering.sql.validator.service.validator;
 import co.byng.internal.engineering.sql.validator.service.validator.factory.MySqlParserFactory;
 import co.byng.internal.engineering.sql.validator.service.validator.factory.ParserFactory;
 import co.byng.internal.engineering.sql.validator.service.validator.model.MySqlValidationResults;
+import co.byng.internal.engineering.sql.validator.service.validator.model.ParseTreeWrappingResults;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
+import javafx.util.Pair;
 import org.antlr.grammarv4.mysql.MySQLParser;
 import org.antlr.grammarv4.mysql.MySQLParserBaseVisitor;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 
 
@@ -28,7 +31,7 @@ import org.antlr.v4.runtime.Recognizer;
  * 
  * @author M.D.Ward <matthew.ward@byng.co>
  */
-public class MySqlValidator implements Validator<MySqlValidationResults> {
+public class MySqlValidator implements Validator<MySqlValidationResults>, ParseTreeBuilder {
 
     private final ParserFactory<MySQLParser> parserFactory;
 
@@ -37,10 +40,22 @@ public class MySqlValidator implements Validator<MySqlValidationResults> {
     }
 
     @Override
+    public ParseTree buildParseTree(
+        final String input,
+        final Map<String, String> additionalArguments
+    ) {
+        return this.doValidate(input).getParseTree();
+    }
+    
+    @Override
     public MySqlValidationResults validate(
         final String input,
         final Map<String, String> additionalArguments
     ) {
+        return this.doValidate(input).getResults();
+    }
+    
+    protected ParseTreeWrappingResults<MySqlValidationResults> doValidate(String input) {
         final List<String> errors = new ArrayList<>();
         
         MySQLParser parser = this.parserFactory.buildParser(
@@ -55,8 +70,9 @@ public class MySqlValidator implements Validator<MySqlValidationResults> {
         );
         
         final Map<String, Integer> namedParameters = new LinkedHashMap<>();
-        final List<Boolean> unnamedParameters = new ArrayList<Boolean>();
+        final List<Boolean> unnamedParameters = new ArrayList<>();
         
+        ParseTree parseTree;
         new MySQLParserBaseVisitor() {
 
             @Override
@@ -82,7 +98,7 @@ public class MySqlValidator implements Validator<MySqlValidationResults> {
                 return super.visitUnnamed_parameter(ctx);
             }
             
-        }.visit(parser.stat());
+        }.visit((parseTree = parser.stat()));
         
         MySqlValidationResults result = new MySqlValidationResults();
 
@@ -94,9 +110,7 @@ public class MySqlValidator implements Validator<MySqlValidationResults> {
         result.validationState = errors.isEmpty();
         result.validationErrors = errors.toArray(new String[errors.size()]);
 
-        return result;
+        return new ParseTreeWrappingResults<>(result, parseTree);
     }
-    
-    
     
 }

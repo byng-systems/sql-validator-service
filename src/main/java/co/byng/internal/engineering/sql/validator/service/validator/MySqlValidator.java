@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javafx.util.Pair;
 import org.antlr.grammarv4.mysql.MySQLParser;
 import org.antlr.grammarv4.mysql.MySQLParserBaseVisitor;
 import org.antlr.v4.runtime.BaseErrorListener;

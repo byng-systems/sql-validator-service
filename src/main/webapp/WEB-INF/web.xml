@@ -6,7 +6,17 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>MySqlValidatorServlet</servlet-name>
+        <url-pattern>/validate/mysql</url-pattern>
         <url-pattern>/validate/sql</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>MySqlAstImageServlet</servlet-name>
+        <servlet-class>co.byng.internal.engineering.sql.validator.service.servlet.MySqlAstImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MySqlAstImageServlet</servlet-name>
+        <url-pattern>/ast/mysql</url-pattern>
+        <url-pattern>/ast/sql</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
